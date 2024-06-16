@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 
 function StudentList(props) {
     const [data, setData] = useState([]);
-    const [dataUpdate, setDataUpdate] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [title, setTitle] = useState('Tambah Data Mahasiswa');
@@ -28,19 +27,27 @@ function StudentList(props) {
         e.preventDefault();
         const studentData = { nim, name, address, email };
         console.log(studentData);
-        console.log('Submitting form with data:', studentData); //
+        console.log('Submitting form with data:', studentData); 
         try {
             if (id) {
                 const response = await axios.put(`http://localhost:5157/api/StudentsContoller/${id}`, studentData);
                 if (response.status === 200) {
-                    Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
                         position: "top-end",
-                        icon: "success",
-                        title: "Successfully updated",
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
                     });
-                    setData(prevData => [response.data, ...prevData]);
+                    Toast.fire({
+                        icon: "success",
+                        title: "Data updated successfully"
+                    });
+                    setData(prevData => prevData.map(item => item.id === id ? response.data.data : item));
                     handleClose();
                 }
                 else {
@@ -49,12 +56,20 @@ function StudentList(props) {
             } else {
                 const response = await axios.post('http://localhost:5157/api/StudentsContoller', studentData);
                 if (response.status === 201) {
-                    Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
                         position: "top-end",
-                        icon: "success",
-                        title: "Successfully submitted",
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "success",
+                        title: "Data inserted successfully"
                     });
                     setData(prevData => [response.data, ...prevData]);
                     handleClose();
@@ -93,7 +108,7 @@ function StudentList(props) {
                 setName(result.data.name);
                 setAddress(result.data.address);
                 setEmail(result.data.email);
-                setDataUpdate(result.data);
+                setId(result.data.id)
             }
         } catch (error) {
             setError(error);
@@ -111,13 +126,49 @@ function StudentList(props) {
         setAddress('');
         setEmail('');
     };
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true)
+        setId('');
+    };
     const handleShowUpdate = (id) => {
         setShow(true)
         changeLabel()
         GetDataId(id)
         console.log('ID:', id);
     };
+
+    const showSwalDelete = async (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const result = await axios.delete(`http://localhost:5157/api/StudentsContoller/${id}`);
+                    if (result.status === 200) {
+                        setData(prevData => prevData.filter(student => student.id !== id));
+                        console.log('ID:', id);
+                        console.log('Result', result);
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your data has been deleted.",
+                            icon: "success"
+                        });
+                    }
+                } catch (error) {
+                    setError(error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
+    };
+
 
     if (loading) {
         return <div>Loading...</div>;
@@ -161,7 +212,11 @@ function StudentList(props) {
                                     >
                                         <i className="bi bi-pencil-square text-light"></i>
                                     </Button>{' '}
-                                    <Button href={`/editstudents/${item.id}`} variant="danger">
+                                    <Button variant="danger" onClick={() => {
+                                        showSwalDelete(item.id);
+                                        setId(item.id)
+                                    }}
+                                    >
                                         <i className="bi bi-trash text-light"></i>
                                     </Button>{' '}
                                 </td>
@@ -169,7 +224,7 @@ function StudentList(props) {
                         ))}
                     </tbody>
                 </Table>
-            </div>
+            </div >
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>{title}</Modal.Title>
