@@ -5,14 +5,18 @@ import Swal from "sweetalert2";
 
 function StudentList(props) {
     const [data, setData] = useState([]);
+    const [dataUpdate, setDataUpdate] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [title, setTitle] = useState('Tambah Data Mahasiswa');
+    const changeLabel = () => {
+        setTitle('Update Data Mahasiswa'); // Change this to the desired text
+    };
+    const [id, setId] = useState('');
     const [nim, setNim] = useState('');
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [email, setEmail] = useState('');
-
     const handleNimChange = (e) => {
         const value = e.target.value;
         if (value.length <= 8) {
@@ -26,26 +30,44 @@ function StudentList(props) {
         console.log(studentData);
         console.log('Submitting form with data:', studentData); //
         try {
-            const response = await axios.post('http://localhost:5157/api/StudentsContoller', studentData);
-            console.log(response);
-            if (response.status === 201) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Successfully submitted",
-                    showConfirmButton: false,
-                    timer: 1000
-                });
-                console.log('Data submitted successfully');
-                setData(prevData => [response.data, ...prevData]);
-                handleClose();
+            if (id) {
+                const response = await axios.put(`http://localhost:5157/api/StudentsContoller/${id}`, studentData);
+                if (response.status === 200) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Successfully updated",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                    setData(prevData => [response.data, ...prevData]);
+                    handleClose();
+                }
+                else {
+                    console.error('Failed to submit data');
+                }
             } else {
-                console.error('Failed to submit data');
+                const response = await axios.post('http://localhost:5157/api/StudentsContoller', studentData);
+                if (response.status === 201) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Successfully submitted",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                    setData(prevData => [response.data, ...prevData]);
+                    handleClose();
+                }
+                else {
+                    console.error('Failed to submit data');
+                }
             }
         } catch (error) {
             console.error('Error:', error);
         }
     };
+
     useEffect(() => {
         const GetData = async () => {
             try {
@@ -61,6 +83,25 @@ function StudentList(props) {
         GetData();
     }, []);
 
+    const GetDataId = async (id) => {
+        try {
+            const result = await axios.get(`http://localhost:5157/api/StudentsContoller/${id}`);
+            console.log(result.data);
+            if (result.status === 200) {
+                console.log('Data successfully show');
+                setNim(result.data.nim);
+                setName(result.data.name);
+                setAddress(result.data.address);
+                setEmail(result.data.email);
+                setDataUpdate(result.data);
+            }
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const [show, setShow] = useState(false);
 
     const handleClose = () => {
@@ -71,6 +112,13 @@ function StudentList(props) {
         setEmail('');
     };
     const handleShow = () => setShow(true);
+    const handleShowUpdate = (id) => {
+        setShow(true)
+        changeLabel()
+        GetDataId(id)
+        console.log('ID:', id);
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -106,7 +154,11 @@ function StudentList(props) {
                                 <td>{item.address}</td>
                                 <td>{item.email}</td>
                                 <td>
-                                    <Button href={`/editstudents/${item.id}`} variant="primary">
+                                    <Button variant="primary" onClick={() => {
+                                        handleShowUpdate(item.id);
+                                        setId(item.id)
+                                    }}
+                                    >
                                         <i className="bi bi-pencil-square text-light"></i>
                                     </Button>{' '}
                                     <Button href={`/editstudents/${item.id}`} variant="danger">
@@ -120,7 +172,7 @@ function StudentList(props) {
             </div>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Tambah Data Mahasiswa</Modal.Title>
+                    <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
