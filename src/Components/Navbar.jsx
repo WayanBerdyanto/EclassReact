@@ -1,15 +1,11 @@
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import { Button, Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 function NavbarComponent() {
     return (
         <Navbar expand="lg" className="bg-body-tertiary py-3">
             <Container fluid>
-                <Navbar.Brand href="#">E-Class</Navbar.Brand>
+                <Navbar.Brand href="/">E-Class</Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav
@@ -17,19 +13,16 @@ function NavbarComponent() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="#action1">Home</Nav.Link>
-                        <Nav.Link href="#action2">Link</Nav.Link>
-                        <NavDropdown title="Data" id="navbarScrollingDropdown">
-                            <NavDropdown.Item href="#action3">Mahasiswa</NavDropdown.Item>
+                        <Nav.Link href="/">Dashboard</Nav.Link>
+                        <NavDropdown data-bs-theme="dark" title="Data" id="navbarScrollingDropdown">
+                            <NavDropdown.Item href="/students">Students</NavDropdown.Item>
                             <NavDropdown.Item href="#action4">
-                                Dosen
+                                Lecturers
                             </NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link href="#" disabled>
-                            Link
-                        </Nav.Link>
+                        <Nav.Link href="#action2">Settings</Nav.Link>
                     </Nav>
-                    <Form className="d-flex">
+                    <Form className="d-flex me-4">
                         <Form.Control
                             type="search"
                             placeholder="Search"
@@ -38,6 +31,19 @@ function NavbarComponent() {
                         />
                         <Button variant="outline-success">Search</Button>
                     </Form>
+
+                    <Dropdown className='my-2 my-lg-0'>
+                        <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                            <i className="bi bi-person-fill"></i>
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu className='dropdown-menu-lg-end'>
+                            <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+
                 </Navbar.Collapse>
             </Container>
         </Navbar>
