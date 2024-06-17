@@ -1,11 +1,43 @@
 import { Button, Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useAuth } from '../Components/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function NavbarComponent() {
+
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+    const swalLogout = (e) => {
+        e.preventDefault();
+        Swal.fire({
+            title: "Are you sure Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Logout!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Logout!",
+                    text: "Logout successfully",
+                    icon: "success"
+                });
+                handleLogout();
+            }
+        });
+    }
+
     return (
         <Navbar expand="lg" className="bg-body-tertiary py-3">
             <Container fluid>
-                <Navbar.Brand href="/">E-Class</Navbar.Brand>
+                <Navbar.Brand href="/dashboard">E-Class</Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav
@@ -13,7 +45,7 @@ function NavbarComponent() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="/">Dashboard</Nav.Link>
+                        <Nav.Link href="/dashboard">Dashboard</Nav.Link>
                         <NavDropdown data-bs-theme="dark" title="Data" id="navbarScrollingDropdown">
                             <NavDropdown.Item href="/students">Students</NavDropdown.Item>
                             <NavDropdown.Item href="#action4">
@@ -38,9 +70,9 @@ function NavbarComponent() {
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu className='dropdown-menu-lg-end'>
-                            <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                            <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
+                            <Dropdown.Item onClick={swalLogout}>Logout</Dropdown.Item>
+
                         </Dropdown.Menu>
                     </Dropdown>
 

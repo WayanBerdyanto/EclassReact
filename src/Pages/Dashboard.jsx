@@ -1,6 +1,7 @@
 import CardComponent from "../Components/Card";
 import React, { useEffect } from "react";
 import { useLoading } from "../Components/LoadingContext";
+
 function Dashboard(){
 
     useEffect(() => {
