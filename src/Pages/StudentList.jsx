@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Button, Form, Modal } from 'react-bootstrap';
+import { Table, Button, Form, Modal, Card } from 'react-bootstrap';
 import Swal from "sweetalert2";
+import { useLoading } from "../Components/LoadingContext";
 
-function StudentList(props) {
+function StudentList() {
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { loading, setLoading } = useLoading();
     const [error, setError] = useState(null);
     const [title, setTitle] = useState('Tambah Data Mahasiswa');
     const changeLabel = () => {
-        setTitle('Update Data Mahasiswa'); // Change this to the desired text
+        setTitle('Update Data Mahasiswa');
     };
+    useEffect(() => {
+        document.title = "Student List";
+    }, []);
     const [id, setId] = useState('');
     const [nim, setNim] = useState('');
     const [name, setName] = useState('');
@@ -27,7 +31,7 @@ function StudentList(props) {
         e.preventDefault();
         const studentData = { nim, name, address, email };
         console.log(studentData);
-        console.log('Submitting form with data:', studentData); 
+        console.log('Submitting form with data:', studentData);
         try {
             if (id) {
                 const response = await axios.put(`http://localhost:5157/api/StudentsContoller/${id}`, studentData);
@@ -84,6 +88,7 @@ function StudentList(props) {
     };
 
     useEffect(() => {
+        setLoading(true);
         const GetData = async () => {
             try {
                 const result = await axios.get('http://localhost:5157/api/StudentsContoller');
@@ -92,11 +97,13 @@ function StudentList(props) {
             } catch (error) {
                 setError(error);
             } finally {
-                setLoading(false);
+                setTimeout(() => {
+                    setLoading(false);
+                }, 1000);
             }
         }
         GetData();
-    }, []);
+    }, [setLoading]);
 
     const GetDataId = async (id) => {
         try {
@@ -169,9 +176,8 @@ function StudentList(props) {
         });
     };
 
-
     if (loading) {
-        return <div>Loading...</div>;
+        return <div>{setLoading(true)}</div>;
     }
     if (error) {
         return <div>Error: {error.message}</div>;
@@ -179,51 +185,58 @@ function StudentList(props) {
     return (
         <>
             <div className="container-fluid">
-                <h2 className="text-center mt-4">Data Mahasiswa</h2>
-                <div className="d-flex justify-content-end mt-2">
-                    <Button className="px-3" variant="primary" onClick={handleShow}>
-                        <i className="bi bi-person-plus text-light"></i>
-                    </Button>{' '}
-                </div>
-                <Table striped bordered hover className="mt-2">
-                    <thead>
-                        <tr>
-                            <th>NO</th>
-                            <th>Nim</th>
-                            <th>Name</th>
-                            <th>Address</th>
-                            <th>Email</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((item, idx) => (
-                            <tr key={idx}>
-                                <td>{idx + 1}</td>
-                                <td>{item.nim}</td>
-                                <td>{item.name}</td>
-                                <td>{item.address}</td>
-                                <td>{item.email}</td>
-                                <td>
-                                    <Button variant="primary" onClick={() => {
-                                        handleShowUpdate(item.id);
-                                        setId(item.id)
-                                    }}
-                                    >
-                                        <i className="bi bi-pencil-square text-light"></i>
-                                    </Button>{' '}
-                                    <Button variant="danger" onClick={() => {
-                                        showSwalDelete(item.id);
-                                        setId(item.id)
-                                    }}
-                                    >
-                                        <i className="bi bi-trash text-light"></i>
-                                    </Button>{' '}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                <Card className="mt-4">
+                    <Card.Header>
+                        <div className="d-flex justify-content-between mt-2">
+                            <Card.Title>Data Students List</Card.Title>
+                            <Button className="px-3" variant="primary" onClick={handleShow}>
+                                <i className="bi bi-person-plus text-light"></i>
+                            </Button>{' '}
+                        </div>
+                    </Card.Header>
+                    <Card.Body>
+                        <Table striped bordered hover className="mt-2">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>Nim</th>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.map((item, idx) => (
+                                    <tr key={idx}>
+                                        <td>{idx + 1}</td>
+                                        <td>{item.nim}</td>
+                                        <td>{item.name}</td>
+                                        <td>{item.address}</td>
+                                        <td>{item.email}</td>
+                                        <td>
+                                            <Button variant="primary" onClick={() => {
+                                                handleShowUpdate(item.id);
+                                                setId(item.id)
+                                            }}
+                                            >
+                                                <i className="bi bi-pencil-square text-light"></i>
+                                            </Button>{' '}
+                                            <Button variant="danger" onClick={() => {
+                                                showSwalDelete(item.id);
+                                                setId(item.id)
+                                            }}
+                                            >
+                                                <i className="bi bi-trash text-light"></i>
+                                            </Button>{' '}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </Card.Body>
+                </Card>
+
             </div >
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
