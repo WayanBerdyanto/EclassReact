@@ -15,6 +15,7 @@ import { LoadingState } from "./Components/LoadingContext";
 import { AuthProvider, useAuth } from "./Components/AuthContext";
 import styles from "./LoadingWrapper.module.css";
 import PrivateRoute from "./Components/PrivateRoute";
+import Register from "./Pages/Register";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ const MainContent = () => {
       <LoadingWrapper>
         <Routes>
           <Route path="/" element={<LoginPage />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/dashboard"
             element={<PrivateRoute element={<Dashboard />} />}
