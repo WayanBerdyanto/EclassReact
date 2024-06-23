@@ -94,7 +94,7 @@ function LoginPage() {
                         </Button>
                     </Row>
                     <Row>
-                        <Button className='bg-secondary' href='/register'>Register</Button>
+                        <Button href='/register' variant="outline-secondary">Register</Button>
                     </Row>
                 </Form>
             </div>
