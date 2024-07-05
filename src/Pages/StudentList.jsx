@@ -199,11 +199,11 @@ function StudentList() {
                             <thead>
                                 <tr>
                                     <th>NO</th>
-                                    <th>Nim</th>
-                                    <th>Name</th>
-                                    <th>Address</th>
-                                    <th>Email</th>
-                                    <th>Action</th>
+                                    <th>NIM</th>
+                                    <th>NAME</th>
+                                    <th>ADDRESS</th>
+                                    <th>EMAIL</th>
+                                    <th>ACTION</th>
                                 </tr>
                             </thead>
                             <tbody>

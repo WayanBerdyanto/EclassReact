@@ -16,6 +16,7 @@ import { AuthProvider, useAuth } from "./Components/AuthContext";
 import styles from "./LoadingWrapper.module.css";
 import PrivateRoute from "./Components/PrivateRoute";
 import Register from "./Pages/Register";
+import Lecturers from "./Pages/Lecturer";
 
 function App() {
   return (
@@ -43,7 +44,7 @@ const MainContent = () => {
 
   return (
     <>
-      {location.pathname !== "/" && isAuthenticated && <NavbarComponent />}
+      {location.pathname !== "/" &&location.pathname !== "/register" && isAuthenticated && <NavbarComponent />}
       <LoadingWrapper>
         <Routes>
           <Route path="/" element={<LoginPage />} />
@@ -55,6 +56,10 @@ const MainContent = () => {
           <Route
             path="/students"
             element={<PrivateRoute element={<StudentList />} />}
+          />
+          <Route
+            path="/lecturers"
+            element={<PrivateRoute element={<Lecturers />} />}
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

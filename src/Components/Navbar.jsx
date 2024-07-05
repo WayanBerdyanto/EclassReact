@@ -1,5 +1,4 @@
 import { Button, Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useAuth } from '../Components/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +47,7 @@ function NavbarComponent() {
                         <Nav.Link href="/dashboard">Dashboard</Nav.Link>
                         <NavDropdown data-bs-theme="dark" title="Data" id="navbarScrollingDropdown">
                             <NavDropdown.Item href="/students">Students</NavDropdown.Item>
-                            <NavDropdown.Item href="#action4">
+                            <NavDropdown.Item href="/lecturers">
                                 Lecturers
                             </NavDropdown.Item>
                         </NavDropdown>
